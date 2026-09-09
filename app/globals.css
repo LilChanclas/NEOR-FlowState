@@ -24,3 +24,18 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/*ANCHO DEL SIDEBAR Y ALTO DEL NAVBAR, AMBOS COMPONENTES LEEN DE AQUI*/
+:root {
+  --navbar-h: 5rem;
+  /* 80px  - h-20 */
+  --sidebar-w: 14rem;
+  /* 224px - w-56 */
+}
+
+@media (min-width: 768px) {
+  :root {
+    --navbar-h: 6rem;
+    /* 96px - h-24 */
+  }
+}
