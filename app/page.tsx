@@ -1,17 +1,13 @@
-import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers'
+import { getClients } from "@/lib/clients";
+import Dropdown from "./components/Listbox";
 
-export default async function Page() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
-
-  const { data: todos } = await supabase.from('todos').select()
-
+export default async function Home() {
+  const clients = await getClients();
   return (
-    <ul>
-      {todos?.map((todo) => (
-        <li key={todo.id}>{todo.name}</li>
-      ))}
-    </ul>
-  )
+    <section className="bg-[#FAFAFA] w-full h-full flex justify-start">
+      <div className="px-20 py-5">
+        <Dropdown clients={clients} />
+      </div>
+    </section>
+  );
 }
