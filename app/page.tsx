@@ -1,12 +1,17 @@
-import Dropdown from "./components/Dropdown";
+import { createClient } from '@/utils/supabase/server'
+import { cookies } from 'next/headers'
 
-export default function Home() {
+export default async function Page() {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: todos } = await supabase.from('todos').select()
+
   return (
-    <section className="bg-gray-800 w-full h-full flex">
-      <div className="">
-        <Dropdown></Dropdown>
-         <p className="m-auto text-white">AQUI VA UN TABLERO TIPO KANBAN</p>
-      </div>
-    </section>
-  );
+    <ul>
+      {todos?.map((todo) => (
+        <li key={todo.id}>{todo.name}</li>
+      ))}
+    </ul>
+  )
 }
