@@ -14,12 +14,17 @@ type Client = {
   name: string;
 };
 
-export default function ListboxMenu({ clients }: { clients: Client[] }) {
-  const [selectedClient, setSelectedClient] = useState<Client>()
+type ListboxMenuProps = {
+  clients: Client[];
+  onSelect: (clientId: number | null) => void;
+};
 
-  const handleChange = (client: Client) => {
+export default function ListboxMenu({ clients, onSelect }: ListboxMenuProps) {
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+
+  const handleChange = (client: Client | null) => {
     setSelectedClient(client);
-    //router.push(`/clients/${client.id}`);
+    onSelect(client ? client.id : null);
   };
 
   return (
@@ -86,6 +91,39 @@ export default function ListboxMenu({ clients }: { clients: Client[] }) {
             outline-none
           "
         >
+          <ListboxOption
+            value={null}
+            className="
+              group
+              flex
+              cursor-pointer
+              items-center
+              justify-between
+              rounded-md
+              px-3
+              py-2
+              text-[13px]
+              font-medium
+              text-[#4A4A4A]
+              outline-none
+              transition-colors
+              duration-150
+              data-focus:bg-[#F3F2D8]
+              data-focus:text-[#6F6B17]
+            "
+          >
+            <span>Todos los clientes</span>
+            <HiCheck
+              className="
+                invisible
+                h-4
+                w-4
+                text-[#6F6B17]
+                group-data-selected:visible
+              "
+            />
+          </ListboxOption>
+
           {clients.map((client) => (
             <ListboxOption
               key={client.id}
