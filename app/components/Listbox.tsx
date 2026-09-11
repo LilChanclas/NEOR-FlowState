@@ -7,7 +7,6 @@ import {
   ListboxOptions,
 } from "@headlessui/react";
 import { HiChevronDown, HiCheck } from "react-icons/hi";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type Client = {
@@ -16,7 +15,6 @@ type Client = {
 };
 
 export default function ListboxMenu({ clients }: { clients: Client[] }) {
-  const router = useRouter();
   const [selectedClient, setSelectedClient] = useState<Client>()
 
   const handleChange = (client: Client) => {
@@ -36,7 +34,7 @@ export default function ListboxMenu({ clients }: { clients: Client[] }) {
             rounded-md
             border
             border-[#D8D6A0]
-            bg-white
+            bg-[#F6F5F2]
             px-5
             py-2.5
             text-[13px]

@@ -1,20 +1,6 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-
-type Publication = {
-    id: number;
-    client_id: number;
-    delivery_date: string | null;
-    clients: {
-        name: string;
-    } | null;
-    formats: {
-        name: string;
-    } | null;
-    statuses: {
-        name: string;
-    } | null;
-};
+import { Publication } from "@/app/types/Publication";
 
 export async function getPublications(): Promise<Publication[]> {
     const cookieStore = await cookies();
