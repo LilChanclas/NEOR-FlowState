@@ -73,9 +73,11 @@ export default function ListboxMenu({ clients }: { clients: Client[] }) {
         <ListboxOptions
           anchor="bottom"
           className="
+            overflow-y-auto
             z-50
             mt-2
             w-52
+            h-[300px]
             rounded-lg
             border
             border-[#E5E3C4]
@@ -98,7 +100,7 @@ export default function ListboxMenu({ clients }: { clients: Client[] }) {
                 justify-between
                 rounded-md
                 px-3
-                py-2.5
+                py-2
                 text-[13px]
                 font-medium
                 text-[#4A4A4A]
