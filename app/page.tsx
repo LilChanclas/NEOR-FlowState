@@ -1,6 +1,6 @@
 import { getClients } from "@/lib/clients";
 import { getPublications } from "@/lib/publications";
-import Dropdown from "./components/Listbox";
+import ListboxMenu from "./components/Listbox";
 
 const statuses = [
     "FALTA",
@@ -20,9 +20,9 @@ export default async function Home() {
         <main className="bg-[#FAFAFA] min-h-screen w-full">
 
             {/* Header */}
-            <section className="bg-black w-full flex justify-start">
+            <section className="bg-[#FAFAFA] w-full flex justify-start">
                 <div className="px-20 py-5">
-                    <Dropdown clients={clients} />
+                    <ListboxMenu clients={clients} />
                 </div>
             </section>
 
@@ -39,7 +39,7 @@ export default async function Home() {
                         return (
                             <div
                                 key={status}
-                                className="bg-gray-100 rounded-lg p-4 min-w-[300px] w-[300px]"
+                                className="text-black bg-gray-100 rounded-lg p-4 min-w-[300px] w-[300px]"
                             >
                                 {/* Estado */}
                                 <div className="flex items-center justify-between mb-4">
@@ -60,7 +60,7 @@ export default async function Home() {
                                             key={publication.id}
                                             className="bg-white rounded-lg p-4 shadow-sm"
                                         >
-                                            <h3 className="font-semibold">
+                                            <h3 className="text-black font-semibold">
                                                 {publication.clients?.name}
                                             </h3>
 
