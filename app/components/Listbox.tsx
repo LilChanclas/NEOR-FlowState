@@ -8,6 +8,7 @@ import {
 } from "@headlessui/react";
 import { HiChevronDown, HiCheck } from "react-icons/hi";
 import { useState } from "react";
+import { toTitleCase } from "@/utils/functions/titleCase";
 
 type Client = {
   id: number;
@@ -147,7 +148,7 @@ export default function ListboxMenu({ clients, onSelect }: ListboxMenuProps) {
                 data-focus:text-[#6F6B17]
               "
             >
-              <span>{client.name}</span>
+              <span>{toTitleCase(client.name)}</span>
 
               <HiCheck
                 className="

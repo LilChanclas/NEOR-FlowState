@@ -1,3 +1,4 @@
+import { toTitleCase } from "@/utils/functions/titleCase";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -46,7 +47,7 @@ export default function Card({ id, delivery_date, clients, formats }: CardProps)
         >
             {/* Nombre del cliente */}
             <p className="text-[15px] leading-snug text-[#1B1A17]">
-                {clients?.name ?? "Sin cliente"}
+                {toTitleCase(clients?.name) ?? "Sin cliente"}
             </p>
 
             <div className="mt-2 flex items-center justify-between">
