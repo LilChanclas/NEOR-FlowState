@@ -1,16 +1,11 @@
 import { toTitleCase } from "@/utils/functions/titleCase";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { Publication } from "../types/Publication";
 
 interface CardProps {
-    id: number;
-    delivery_date: string | null;
-    clients: {
-        name: string;
-    } | null;
-    formats: {
-        name: string;
-    } | null;
+    publication: Publication;
+    onClick: (publication: Publication) => void;
 }
 
 function formatDate(value: string | null) {
@@ -21,7 +16,8 @@ function formatDate(value: string | null) {
     });
 }
 
-export default function Card({ id, delivery_date, clients, formats }: CardProps) {
+export default function Card({ publication, onClick }: CardProps) {
+    const { id, delivery_date, clients, formats } = publication;
     const date = formatDate(delivery_date);
 
     // useDraggable identifica esta card con el id de la publicación.
@@ -41,6 +37,7 @@ export default function Card({ id, delivery_date, clients, formats }: CardProps)
             style={style}
             {...listeners}
             {...attributes}
+            onClick={() => onClick(publication)}
             className={`border-b border-[#E4E1DA] py-3 last:border-none cursor-grab active:cursor-grabbing ${
                 isDragging ? "opacity-40" : ""
             }`}

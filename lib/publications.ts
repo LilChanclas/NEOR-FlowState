@@ -12,7 +12,13 @@ export async function getPublications(): Promise<Publication[]> {
             id,
             client_id,
             status_id,
+            publication_number,
             delivery_date,
+            publication_date,
+            topic,
+            copy,
+            caption,
+            is_story,
             clients(name),
             formats(name),
             statuses(name)

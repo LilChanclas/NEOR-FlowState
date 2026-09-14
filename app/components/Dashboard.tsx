@@ -1,11 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import {
+    DndContext,
+    DragEndEvent,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from "@dnd-kit/core";
 import { createClient } from "@/utils/supabase/client";
 import { Publication } from "../types/Publication";
 import Board from "./Board";
 import ListboxMenu from "./Listbox";
+import PublicationModal from "./PublicationModal";
 
 type Client = {
     id: number;
@@ -33,6 +40,19 @@ const STATUS_NAMES: Record<number, string> = {
 export default function Dashboard({ clients, publications: initialPublications }: DashboardProps) {
     const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
     const [publications, setPublications] = useState<Publication[]>(initialPublications);
+
+    // Cuál publicación está abierta en el modal ahora mismo. null = modal cerrado.
+    const [selectedPublication, setSelectedPublication] = useState<Publication | null>(null);
+
+    // Sin esto, el click para abrir el modal sería interceptado por dnd-kit
+    // como el inicio de un drag (mousedown/mouseup son técnicamente un drag
+    // de distancia 0). Con activationConstraint, dnd-kit espera a que el
+    // mouse se mueva más de 8px antes de considerar que hay un arrastre real.
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: { distance: 8 },
+        })
+    );
 
     const filteredPublications = selectedClientId
         ? publications.filter((pub) => pub.client_id === selectedClientId)
@@ -85,8 +105,70 @@ export default function Dashboard({ clients, publications: initialPublications }
         }
     }
 
+    // Edit desde el modal. Recibe solo los campos editables + el id.
+    async function handleUpdatePublication(
+        publicationId: number,
+        changes: Partial<
+            Pick<
+                Publication,
+                "delivery_date" | "publication_date" | "topic" | "copy" | "caption" | "is_story"
+            >
+        >
+    ) {
+        const previousPublications = publications;
+
+        // Optimistic update.
+        setPublications((current) =>
+            current.map((pub) =>
+                pub.id === publicationId ? { ...pub, ...changes } : pub
+            )
+        );
+
+        const supabase = createClient();
+        const { error } = await supabase
+            .from("publications")
+            .update(changes)
+            .eq("id", publicationId);
+
+        if (error) {
+            console.error("No se pudo guardar la publicación:", error.message);
+            setPublications(previousPublications);
+            alert("No se pudo guardar el cambio. Intentá de nuevo.");
+            return;
+        }
+
+        // Éxito: cerramos el modal.
+        setSelectedPublication(null);
+    }
+
+    // Delete desde el modal.
+    async function handleDeletePublication(publicationId: number) {
+        const confirmed = window.confirm(
+            "¿Seguro que querés eliminar esta publicación? Esta acción no se puede deshacer."
+        );
+        if (!confirmed) return;
+
+        const previousPublications = publications;
+
+        // Optimistic update: la sacamos del array ya mismo.
+        setPublications((current) => current.filter((pub) => pub.id !== publicationId));
+        setSelectedPublication(null);
+
+        const supabase = createClient();
+        const { error } = await supabase
+            .from("publications")
+            .delete()
+            .eq("id", publicationId);
+
+        if (error) {
+            console.error("No se pudo eliminar la publicación:", error.message);
+            setPublications(previousPublications);
+            alert("No se pudo eliminar la publicación. Intentá de nuevo.");
+        }
+    }
+
     return (
-        <DndContext onDragEnd={handleDragEnd}>
+        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
             {/* Header */}
             <section className="bg-[#F6F5F2] w-full flex justify-start">
                 <div className="px-6 py-5">
@@ -96,8 +178,20 @@ export default function Dashboard({ clients, publications: initialPublications }
 
             {/* Kanban */}
             <section className="bg-[#FAFAFA]">
-                <Board publications={filteredPublications} />
+                <Board
+                    publications={filteredPublications}
+                    onCardClick={setSelectedPublication}
+                />
             </section>
+
+            {selectedPublication && (
+                <PublicationModal
+                    publication={selectedPublication}
+                    onClose={() => setSelectedPublication(null)}
+                    onSave={handleUpdatePublication}
+                    onDelete={handleDeletePublication}
+                />
+            )}
         </DndContext>
     );
 }

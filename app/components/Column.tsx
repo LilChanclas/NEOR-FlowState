@@ -8,9 +8,10 @@ type ColumnProps = {
     status_id: number;
     accent: string;
     publications: Publication[];
+    onCardClick: (publication: Publication) => void;
 };
 
-export default function Column({ status, status_id, accent, publications }: ColumnProps) {
+export default function Column({ status, status_id, accent, publications, onCardClick }: ColumnProps) {
     // El id de este droppable es el status_id real de la BD.
     // Es el mismo valor que vamos a leer en onDragEnd (event.over.id)
     // y el mismo que vamos a mandar en el UPDATE a Supabase.
@@ -35,9 +36,8 @@ export default function Column({ status, status_id, accent, publications }: Colu
                 lo usamos solo para dar feedback visual (fondo sutil). */}
             <div
                 ref={setNodeRef}
-                className={`flex flex-col min-h-[80px] transition-colors ${
-                    isOver ? "bg-[#F3F2E9]" : ""
-                }`}
+                className={`flex flex-col min-h-[80px] transition-colors ${isOver ? "bg-[#F3F2E9]" : ""
+                    }`}
             >
                 {publications.length === 0 ? (
                     <p className="py-8 text-center text-[12px] text-[#B3AEA3]">
@@ -45,13 +45,7 @@ export default function Column({ status, status_id, accent, publications }: Colu
                     </p>
                 ) : (
                     publications.map((pub) => (
-                        <Card
-                            key={pub.id}
-                            id={pub.id}
-                            clients={pub.clients}
-                            formats={pub.formats}
-                            delivery_date={pub.delivery_date}
-                        />
+                        <Card key={pub.id} publication={pub} onClick={onCardClick} />
                     ))
                 )}
             </div>
