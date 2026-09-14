@@ -1,14 +1,21 @@
 import { Publication } from "../types/Publication";
 import Card from "./Card";
+import { useDroppable } from "@dnd-kit/core";
 import { toTitleCase } from "@/utils/functions/titleCase";
 
 type ColumnProps = {
     status: string;
+    status_id: number;
     accent: string;
     publications: Publication[];
 };
 
-export default function Column({ status, accent, publications }: ColumnProps) {
+export default function Column({ status, status_id, accent, publications }: ColumnProps) {
+    // El id de este droppable es el status_id real de la BD.
+    // Es el mismo valor que vamos a leer en onDragEnd (event.over.id)
+    // y el mismo que vamos a mandar en el UPDATE a Supabase.
+    const { setNodeRef, isOver } = useDroppable({ id: status_id });
+
     return (
         <div className="flex w-72 flex-shrink-0 flex-col">
             <div
@@ -23,7 +30,15 @@ export default function Column({ status, accent, publications }: ColumnProps) {
                 </span>
             </div>
 
-            <div className="flex flex-col">
+            {/* setNodeRef marca este div como la zona receptora de la columna.
+                isOver nos dice si ahora mismo hay algo arrastrándose por encima,
+                lo usamos solo para dar feedback visual (fondo sutil). */}
+            <div
+                ref={setNodeRef}
+                className={`flex flex-col min-h-[80px] transition-colors ${
+                    isOver ? "bg-[#F3F2E9]" : ""
+                }`}
+            >
                 {publications.length === 0 ? (
                     <p className="py-8 text-center text-[12px] text-[#B3AEA3]">
                         Sin publicaciones

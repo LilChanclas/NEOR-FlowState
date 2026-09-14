@@ -11,6 +11,7 @@ export async function getPublications(): Promise<Publication[]> {
         .select(`
             id,
             client_id,
+            status_id,
             delivery_date,
             clients(name),
             formats(name),

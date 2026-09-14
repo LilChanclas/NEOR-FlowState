@@ -1,6 +1,7 @@
 export type Publication = {
     id: number;
     client_id: number;
+    status_id: number;
     delivery_date: string | null;
     clients: {
         name: string;
@@ -11,4 +12,4 @@ export type Publication = {
     statuses: {
         name: string;
     } | null;
-}
+};
